@@ -1,0 +1,26 @@
+SalesStockReporting/
+├── Controllers/
+│   ├── AuthController.cs
+│   ├── ProductsController.cs
+│   ├── ReportsController.cs
+│   └── SalesController.cs
+├── Data/
+│   └── ApplicationDbContext.cs
+├── Models/
+│   ├── Product.cs
+│   ├── Sale.cs
+│   └── User.cs
+├── Services/
+│   ├── AuthService.cs
+│   ├── IAuthService.cs
+│   ├── IProductService.cs
+│   ├── IReportingService.cs
+│   ├── ISalesService.cs
+│   ├── ProductService.cs
+│   ├── ReportingService.cs
+│   └── SalesService.cs
+├── Frontend/
+│   └── npm install
+├── appsettings.json
+├── Program.cs
+└── README.md

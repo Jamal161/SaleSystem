@@ -1,0 +1,31 @@
+CREATE TABLE [Users] (
+    [Id] int NOT NULL IDENTITY,
+    [Username] nvarchar(50) NOT NULL,
+    [PasswordHash] nvarchar(max) NOT NULL,
+    [CreatedAt] datetime2 NOT NULL,
+    CONSTRAINT [PK_Users] PRIMARY KEY ([Id])
+);
+
+CREATE TABLE [Products] (
+    [Id] int NOT NULL IDENTITY,
+    [Name] nvarchar(100) NOT NULL,
+    [SKU] nvarchar(50) NULL,
+    [Price] decimal(18,2) NOT NULL,
+    [StockQty] int NOT NULL,
+    [Description] nvarchar(max) NULL,
+    [IsDeleted] bit NOT NULL,
+    [CreatedAt] datetime2 NOT NULL,
+    CONSTRAINT [PK_Products] PRIMARY KEY ([Id])
+);
+
+CREATE TABLE [Sales] (
+    [Id] int NOT NULL IDENTITY,
+    [ProductId] int NOT NULL,
+    [QuantitySold] int NOT NULL,
+    [TotalPrice] decimal(18,2) NOT NULL,
+    [SaleDate] datetime2 NOT NULL,
+    CONSTRAINT [PK_Sales] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Sales_Products_ProductId] FOREIGN KEY ([ProductId]) REFERENCES [Products] ([Id]) ON DELETE NO ACTION
+);
+
+CREATE INDEX [IX_Sales_ProductId] ON [Sales] ([ProductId]);

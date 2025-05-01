@@ -1,0 +1,872 @@
+﻿<!-- wwwroot/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales and Stock Reporting System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .nav-tabs .nav-link.active {
+            font-weight: bold;
+        }
+
+        .tab-content {
+            padding: 20px;
+            border-left: 1px solid #dee2e6;
+            border-right: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+            border-radius: 0 0 5px 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .pagination-info {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Sales and Stock Reporting System</h1>
+
+        <div id="login-section" class="card" style="max-width: 500px; margin: 0 auto;">
+            <div class="card-header">
+                <h5 class="card-title">Login</h5>
+            </div>
+            <div class="card-body">
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="button" class="btn btn-link" id="show-register">Register</button>
+                </form>
+
+                <form id="register-form" style="display: none;">
+                    <div class="mb-3">
+                        <label for="reg-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="reg-username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reg-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="reg-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="button" class="btn btn-link" id="show-login">Back to Login</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="app-content" style="display: none;">
+            <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="products-tab" data-bs-toggle="tab" data-bs-target="#products" type="button" role="tab">Products</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="sales-tab" data-bs-toggle="tab" data-bs-target="#sales" type="button" role="tab">Sales</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reports-tab" data-bs-toggle="tab" data-bs-target="#reports" type="button" role="tab">Reports</button>
+                </li>
+                <li class="nav-item ms-auto">
+                    <button class="btn btn-sm btn-outline-danger" id="logout-btn">Logout</button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="mainTabsContent">
+                <!-- Products Tab -->
+                <div class="tab-pane fade show active" id="products" role="tabpanel">
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">Add Product</button>
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="product-search" placeholder="Search by name or SKU">
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>SKU</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <!-- Products will be loaded here -->
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between pagination-info">
+                            <div id="products-pagination-info"></div>
+                            <nav>
+                                <ul class="pagination" id="products-pagination">
+                                    <!-- Pagination will be loaded here -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sales Tab -->
+                <div class="tab-pane fade" id="sales" role="tabpanel">
+                    <div class="mb-3">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSaleModal">Record Sale</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Total Price</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-table-body">
+                                <!-- Sales will be loaded here -->
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between pagination-info">
+                            <div id="sales-pagination-info"></div>
+                            <nav>
+                                <ul class="pagination" id="sales-pagination">
+                                    <!-- Pagination will be loaded here -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div class="tab-pane fade" id="reports" role="tabpanel">
+                    <div class="mb-4">
+                        <h4>Current Stock Report</h4>
+                        <button class="btn btn-sm btn-primary mb-3" id="refresh-current-stock">Refresh</button>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>SKU</th>
+                                    <th>Price</th>
+                                    <th>Current Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody id="current-stock-report">
+                                <!-- Current stock report will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h4>Date-wise Stock Report</h4>
+                        <form id="date-wise-report-form" class="row g-3 mb-3">
+                            <div class="col-md-3">
+                                <label for="from-date" class="form-label">From Date</label>
+                                <input type="date" class="form-control" id="from-date" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="to-date" class="form-label">To Date</label>
+                                <input type="date" class="form-control" id="to-date" required>
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary">Generate Report</button>
+                            </div>
+                        </form>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Opening Stock</th>
+                                    <th>Sold Quantity</th>
+                                    <th>Closing Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody id="date-wise-stock-report">
+                                <!-- Date-wise stock report will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-product-form">
+                        <div class="mb-3">
+                            <label for="product-name" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="product-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-sku" class="form-label">SKU Code (optional)</label>
+                            <input type="text" class="form-control" id="product-sku">
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-price" class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" id="product-price" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-stock" class="form-label">Initial Stock Quantity</label>
+                            <input type="number" class="form-control" id="product-stock" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="product-description" class="form-label">Description (optional)</label>
+                            <textarea class="form-control" id="product-description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-product-btn">Save Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-product-form">
+                        <input type="hidden" id="edit-product-id">
+                        <div class="mb-3">
+                            <label for="edit-product-name" class="form-label">Product Name</label>
+                            <input type="text" class="form-control" id="edit-product-name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-product-sku" class="form-label">SKU Code (optional)</label>
+                            <input type="text" class="form-control" id="edit-product-sku">
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-product-price" class="form-label">Price</label>
+                            <input type="number" step="0.01" class="form-control" id="edit-product-price" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-product-stock" class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-control" id="edit-product-stock" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-product-description" class="form-label">Description (optional)</label>
+                            <textarea class="form-control" id="edit-product-description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="update-product-btn">Update Product</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Sale Modal -->
+    <div class="modal fade" id="addSaleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Record New Sale</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="add-sale-form">
+                        <div class="mb-3">
+                            <label for="sale-product" class="form-label">Product</label>
+                            <select class="form-select" id="sale-product" required>
+                                <option value="">Select a product</option>
+                                <!-- Products will be loaded here -->
+                            </select>
+                            <div class="form-text">Available stock: <span id="product-stock-info">0</span></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sale-quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="sale-quantity" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="sale-total" class="form-label">Total Price</label>
+                            <input type="number" step="0.01" class="form-control" id="sale-total" readonly>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-sale-btn">Record Sale</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let currentToken = null;
+            let currentPageProducts = 1;
+            let currentPageSales = 1;
+            const pageSize = 10;
+
+            // Toggle between login and register forms
+            $('#show-register').click(function() {
+                $('#login-form').hide();
+                $('#register-form').show();
+            });
+
+            $('#show-login').click(function() {
+                $('#register-form').hide();
+                $('#login-form').show();
+            });
+
+            // Login form submission
+            $('#login-form').submit(function(e) {
+                e.preventDefault();
+                const username = $('#username').val();
+                const password = $('#password').val();
+
+                $.ajax({
+                    url: '/api/auth/login',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ username, password }),
+                    success: function(response) {
+                        currentToken = response.token;
+                        $('#login-section').hide();
+                        $('#app-content').show();
+                        loadInitialData();
+                    },
+                    error: function() {
+                        alert('Login failed. Please check your credentials.');
+                    }
+                });
+            });
+
+            // Register form submission
+            $('#register-form').submit(function(e) {
+                e.preventDefault();
+                const username = $('#reg-username').val();
+                const password = $('#reg-password').val();
+
+                $.ajax({
+                    url: '/api/auth/register',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ username, password }),
+                    success: function(response) {
+                        alert('Registration successful. Please login.');
+                        $('#register-form').hide();
+                        $('#login-form').show();
+                        $('#reg-username').val('');
+                        $('#reg-password').val('');
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON || 'Registration failed.');
+                    }
+                });
+            });
+
+            // Logout
+            $('#logout-btn').click(function() {
+                currentToken = null;
+                $('#app-content').hide();
+                $('#login-section').show();
+                $('#username').val('');
+                $('#password').val('');
+            });
+
+            // Load initial data after login
+            function loadInitialData() {
+                loadProducts();
+                loadSales();
+                loadCurrentStockReport();
+                loadProductsForSale();
+            }
+
+            // Product search
+            $('#product-search').on('input', function() {
+                currentPageProducts = 1;
+                loadProducts();
+            });
+
+            // Load products with pagination
+            function loadProducts() {
+                const search = $('#product-search').val();
+
+                $.ajax({
+                    url: `/api/products?page=${currentPageProducts}&pageSize=${pageSize}&search=${search}`,
+                    type: 'GET',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    success: function(products, status, xhr) {
+                        const totalCount = xhr.getResponseHeader('X-Total-Count');
+                        renderProductsTable(products);
+                        renderProductsPagination(totalCount);
+                    },
+                    error: function() {
+                        alert('Failed to load products.');
+                    }
+                });
+            }
+
+            // Render products table
+            function renderProductsTable(products) {
+                const $tbody = $('#products-table-body');
+                $tbody.empty();
+
+                if (products.length === 0) {
+                    $tbody.append('<tr><td colspan="6" class="text-center">No products found</td></tr>');
+                    return;
+                }
+
+                products.forEach(product => {
+                    $tbody.append(`
+                        <tr>
+                            <td>${product.id}</td>
+                            <td>${product.name}</td>
+                            <td>${product.sku || '-'}</td>
+                            <td>$${product.price.toFixed(2)}</td>
+                            <td>${product.stockQty}</td>
+                            <td>
+                                <button class="btn btn-sm btn-primary edit-product" data-id="${product.id}">Edit</button>
+                                <button class="btn btn-sm btn-danger delete-product" data-id="${product.id}">Delete</button>
+                            </td>
+                        </tr>
+                    `);
+                });
+
+                // Add event listeners to edit/delete buttons
+                $('.edit-product').click(function() {
+                    const productId = $(this).data('id');
+                    loadProductForEdit(productId);
+                });
+
+                $('.delete-product').click(function() {
+                    const productId = $(this).data('id');
+                    if (confirm('Are you sure you want to delete this product?')) {
+                        deleteProduct(productId);
+                    }
+                });
+            }
+
+            // Render products pagination
+            function renderProductsPagination(totalCount) {
+                const $pagination = $('#products-pagination');
+                $pagination.empty();
+
+                const totalPages = Math.ceil(totalCount / pageSize);
+
+                // Previous button
+                $pagination.append(`
+                    <li class="page-item ${currentPageProducts === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPageProducts - 1}">Previous</a>
+                    </li>
+                `);
+
+                // Page numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    $pagination.append(`
+                        <li class="page-item ${i === currentPageProducts ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `);
+                }
+
+                // Next button
+                $pagination.append(`
+                    <li class="page-item ${currentPageProducts === totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPageProducts + 1}">Next</a>
+                    </li>
+                `);
+
+                // Pagination info
+                const startItem = (currentPageProducts - 1) * pageSize + 1;
+                const endItem = Math.min(currentPageProducts * pageSize, totalCount);
+                $('#products-pagination-info').text(`Showing ${startItem}-${endItem} of ${totalCount} products`);
+
+                // Add event listeners to pagination links
+                $('.page-link').click(function(e) {
+                    e.preventDefault();
+                    const page = $(this).data('page');
+                    if (page >= 1 && page <= totalPages && page !== currentPageProducts) {
+                        currentPageProducts = page;
+                        loadProducts();
+                    }
+                });
+            }
+
+            // Load product for editing
+            function loadProductForEdit(productId) {
+                $.ajax({
+                    url: `/api/products/${productId}`,
+                    type: 'GET',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    success: function(product) {
+                        $('#edit-product-id').val(product.id);
+                        $('#edit-product-name').val(product.name);
+                        $('#edit-product-sku').val(product.sku || '');
+                        $('#edit-product-price').val(product.price);
+                        $('#edit-product-stock').val(product.stockQty);
+                        $('#edit-product-description').val(product.description || '');
+
+                        const modal = new bootstrap.Modal(document.getElementById('editProductModal'));
+                        modal.show();
+                    },
+                    error: function() {
+                        alert('Failed to load product for editing.');
+                    }
+                });
+            }
+
+            // Update product
+            $('#update-product-btn').click(function() {
+                const product = {
+                    id: parseInt($('#edit-product-id').val()),
+                    name: $('#edit-product-name').val(),
+                    sku: $('#edit-product-sku').val(),
+                    price: parseFloat($('#edit-product-price').val()),
+                    stockQty: parseInt($('#edit-product-stock').val()),
+                    description: $('#edit-product-description').val()
+                };
+
+                $.ajax({
+                    url: `/api/products/${product.id}`,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    data: JSON.stringify(product),
+                    success: function() {
+                        alert('Product updated successfully.');
+                        $('#editProductModal').modal('hide');
+                        loadProducts();
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON || 'Failed to update product.');
+                    }
+                });
+            });
+
+            // Delete product
+            function deleteProduct(productId) {
+                $.ajax({
+                    url: `/api/products/${productId}`,
+                    type: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    success: function() {
+                        alert('Product deleted successfully.');
+                        loadProducts();
+                    },
+                    error: function() {
+                        alert('Failed to delete product.');
+                    }
+                });
+            }
+
+            // Save new product
+            $('#save-product-btn').click(function() {
+                const product = {
+                    name: $('#product-name').val(),
+                    sku: $('#product-sku').val(),
+                    price: parseFloat($('#product-price').val()),
+                    stockQty: parseInt($('#product-stock').val()),
+                    description: $('#product-description').val()
+                };
+
+                $.ajax({
+                    url: '/api/products',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    data: JSON.stringify(product),
+                    success: function() {
+                        alert('Product added successfully.');
+                        $('#addProductModal').modal('hide');
+                        $('#add-product-form')[0].reset();
+                        loadProducts();
+                        loadProductsForSale();
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON || 'Failed to add product.');
+                    }
+                });
+            });
+
+            // Load sales with pagination
+            function loadSales() {
+                $.ajax({
+                    url: `/api/sales?page=${currentPageSales}&pageSize=${pageSize}`,
+                    type: 'GET',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    success: function(sales, status, xhr) {
+                        const totalCount = xhr.getResponseHeader('X-Total-Count');
+                        renderSalesTable(sales);
+                        renderSalesPagination(totalCount);
+                    },
+                    error: function() {
+                        alert('Failed to load sales.');
+                    }
+                });
+            }
+
+            // Render sales table
+            function renderSalesTable(sales) {
+                const $tbody = $('#sales-table-body');
+                $tbody.empty();
+
+                if (sales.length === 0) {
+                    $tbody.append('<tr><td colspan="5" class="text-center">No sales found</td></tr>');
+                    return;
+                }
+
+                sales.forEach(sale => {
+                    const saleDate = new Date(sale.saleDate);
+                    $tbody.append(`
+                        <tr>
+                            <td>${sale.id}</td>
+                            <td>${sale.product.name}</td>
+                            <td>${sale.quantitySold}</td>
+                            <td>$${sale.totalPrice.toFixed(2)}</td>
+                            <td>${saleDate.toLocaleDateString()} ${saleDate.toLocaleTimeString()}</td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // Render sales pagination
+            function renderSalesPagination(totalCount) {
+                const $pagination = $('#sales-pagination');
+                $pagination.empty();
+
+                const totalPages = Math.ceil(totalCount / pageSize);
+
+                // Previous button
+                $pagination.append(`
+                    <li class="page-item ${currentPageSales === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPageSales - 1}">Previous</a>
+                    </li>
+                `);
+
+                // Page numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    $pagination.append(`
+                        <li class="page-item ${i === currentPageSales ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>
+                    `);
+                }
+
+                // Next button
+                $pagination.append(`
+                    <li class="page-item ${currentPageSales === totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${currentPageSales + 1}">Next</a>
+                    </li>
+                `);
+
+                // Pagination info
+                const startItem = (currentPageSales - 1) * pageSize + 1;
+                const endItem = Math.min(currentPageSales * pageSize, totalCount);
+                $('#sales-pagination-info').text(`Showing ${startItem}-${endItem} of ${totalCount} sales`);
+
+                // Add event listeners to pagination links
+                $('.page-link').click(function(e) {
+                    e.preventDefault();
+                    const page = $(this).data('page');
+                    if (page >= 1 && page <= totalPages && page !== currentPageSales) {
+                        currentPageSales = page;
+                        loadSales();
+                    }
+                });
+            }
+
+            // Load products for sale dropdown
+            function loadProductsForSale() {
+                $.ajax({
+                    url: '/api/products?page=1&pageSize=1000', // Load all products for dropdown
+                    type: 'GET',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    success: function(products) {
+                        const $select = $('#sale-product');
+                        $select.empty();
+                        $select.append('<option value="">Select a product</option>');
+
+                        products.forEach(product => {
+                            $select.append(`<option value="${product.id}" data-stock="${product.stockQty}">${product.name} (Stock: ${product.stockQty})</option>`);
+                        });
+                    },
+                    error: function() {
+                        alert('Failed to load products for sale.');
+                    }
+                });
+            }
+
+            // Update stock info when product is selected
+            $('#sale-product').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                const stock = selectedOption.data('stock') || 0;
+                $('#product-stock-info').text(stock);
+                $('#sale-quantity').attr('max', stock);
+            });
+
+            // Calculate total price when quantity changes
+            $('#sale-quantity').on('input', function() {
+                const selectedOption = $('#sale-product option:selected');
+                if (selectedOption.val() && $('#sale-quantity').val()) {
+                    const price = parseFloat(selectedOption.text().match(/\(.*?(\d+\.\d{2})/)[1]);
+                    const quantity = parseInt($('#sale-quantity').val());
+                    $('#sale-total').val((price * quantity).toFixed(2));
+                }
+            });
+
+            // Save new sale
+            $('#save-sale-btn').click(function() {
+                const sale = {
+                    productId: parseInt($('#sale-product').val()),
+                    quantitySold: parseInt($('#sale-quantity').val())
+                };
+
+                if (!sale.productId || !sale.quantitySold) {
+                    alert('Please select a product and enter quantity.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/api/sales',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    data: JSON.stringify(sale),
+                    success: function() {
+                        alert('Sale recorded successfully.');
+                        $('#addSaleModal').modal('hide');
+                        $('#add-sale-form')[0].reset();
+                        loadSales();
+                        loadProducts();
+                        loadCurrentStockReport();
+                        loadProductsForSale();
+                    },
+                    error: function(xhr) {
+                        alert(xhr.responseJSON || 'Failed to record sale.');
+                    }
+                });
+            });
+
+            // Load current stock report
+            function loadCurrentStockReport() {
+                $.ajax({
+                    url: '/api/reports/current-stock',
+                    type: 'GET',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    success: function(report) {
+                        renderCurrentStockReport(report);
+                    },
+                    error: function() {
+                        alert('Failed to load current stock report.');
+                    }
+                });
+            }
+
+            // Refresh current stock report
+            $('#refresh-current-stock').click(loadCurrentStockReport);
+
+            // Render current stock report
+            function renderCurrentStockReport(report) {
+                const $tbody = $('#current-stock-report');
+                $tbody.empty();
+
+                if (report.length === 0) {
+                    $tbody.append('<tr><td colspan="4" class="text-center">No products in stock</td></tr>');
+                    return;
+                }
+
+                report.forEach(item => {
+                    $tbody.append(`
+                        <tr>
+                            <td>${item.productName}</td>
+                            <td>${item.sku || '-'}</td>
+                            <td>$${item.price.toFixed(2)}</td>
+                            <td>${item.currentStockQuantity}</td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // Generate date-wise stock report
+            $('#date-wise-report-form').submit(function(e) {
+                e.preventDefault();
+                const fromDate = $('#from-date').val();
+                const toDate = $('#to-date').val();
+
+                if (!fromDate || !toDate) {
+                    alert('Please select both from and to dates.');
+                    return;
+                }
+
+                $.ajax({
+                    url: `/api/reports/date-wise-stock?fromDate=${fromDate}&toDate=${toDate}`,
+                    type: 'GET',
+                    headers: { 'Authorization': `Bearer ${currentToken}` },
+                    success: function(report) {
+                        renderDateWiseStockReport(report);
+                    },
+                    error: function() {
+                        alert('Failed to generate date-wise stock report.');
+                    }
+                });
+            });
+
+            // Render date-wise stock report
+            function renderDateWiseStockReport(report) {
+                const $tbody = $('#date-wise-stock-report');
+                $tbody.empty();
+
+                if (report.length === 0) {
+                    $tbody.append('<tr><td colspan="4" class="text-center">No data available for selected period</td></tr>');
+                    return;
+                }
+
+                report.forEach(item => {
+                    $tbody.append(`
+                        <tr>
+                            <td>${item.productName}</td>
+                            <td>${item.openingStock}</td>
+                            <td>${item.totalSoldQuantity}</td>
+                            <td>${item.closingStock}</td>
+                        </tr>
+                    `);
+                });
+            }
+
+            // Initialize date inputs with default values (current month)
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            $('#from-date').val(firstDay.toISOString().split('T')[0]);
+            $('#to-date').val(today.toISOString().split('T')[0]);
+        });
+    </script>
+</body>
+</html>

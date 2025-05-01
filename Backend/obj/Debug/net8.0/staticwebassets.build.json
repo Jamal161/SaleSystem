@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "mUM5rX6FTEtlgv4qOrnWr060gV+14I7xSloO3RjvGLc=",
+  "Source": "SalesStockSystem",
+  "BasePath": "_content/SalesStockSystem",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "SalesStockSystem\\wwwroot",
+      "Source": "SalesStockSystem",
+      "ContentRoot": "C:\\Users\\user\\OneDrive\\Desktop\\SalesSystem\\Backend\\wwwroot\\",
+      "BasePath": "_content/SalesStockSystem",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Users\\user\\OneDrive\\Desktop\\SalesSystem\\Backend\\wwwroot\\Index.cshtml",
+      "SourceId": "SalesStockSystem",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\user\\OneDrive\\Desktop\\SalesSystem\\Backend\\wwwroot\\",
+      "BasePath": "_content/SalesStockSystem",
+      "RelativePath": "Index.cshtml",
+      "AssetKind": "Build",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "Never",
+      "OriginalItemSpec": "wwwroot\\Index.cshtml"
+    }
+  ]
+}
