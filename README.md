@@ -69,7 +69,7 @@ A web-based system for managing products, sales, and stock reports.
 
 
 
-SalesStockReporting/
+## SalesStockReporting/
 ├── Controllers/
 │   ├── AuthController.cs
 │   ├── ProductsController.cs
